@@ -9,15 +9,16 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteMany
-  nfs:
-    path:  /srv/nfs/woodwaj4         #your MiamiID
-    server: 10.48.10.140
   persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /srv/nfs/woodwaj4
+    server: 10.48.10.140
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: flask-pvc    
+  name: flask-pvc
 spec:
   accessModes:
     - ReadWriteMany
@@ -27,6 +28,7 @@ spec:
   selector:
     matchLabels:
       type: nfs
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,7 +48,7 @@ spec:
     spec:
       containers:
         - name: flask
-          image: cithit/woodwaj4:latest    #your MiamiID
+          image: cithit/woodwaj4:latest
           ports:
             - containerPort: 5000
           volumeMounts:
@@ -56,18 +58,19 @@ spec:
         - name: nfs-storage
           persistentVolumeClaim:
             claimName: flask-pvc
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: flask-dev-service
-spec:                                   
-  ports:
-  - protocol: TCP
-    port: 80  
-    targetPort: 5000
+spec:
   selector:
     app: flask
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -75,14 +78,14 @@ kind: Ingress
 metadata:
   name: nginx
 spec:
-  rules: 
-  - host: 
-    http:
-      paths:
-      - path: /
-        pathType: ImplementationSpecific
-        backend: 
-          service:
-            name: flask-dev-service
-            port:
-              number: 80
+  rules:
+    - host: flask.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: flask-dev-service
+                port:
+                  number: 80
