@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /srv/nfs/woodwaj4
-    server: 10.48.10.140
+    server: 10.48.10.177
 
 ---
 apiVersion: v1
